@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <title>Handwritten Digit Recognition</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/recog">Recognize</a></li>
+      </ul>
+    </nav>
+    <section class="content">
+      <center>
+        <form action="/recog" method="POST" enctype="multipart/form-data">
+          <input type="file" name="img" id="in_image" class="input" required/>
+          <label for="in_image"> <p class="btn">Choose..</p> </label>
+          <section id="preview">THIS IS THE PREVIEW</section>
+          <input type="submit" class="btn" value="Recognize" />
+        </form>
+        {%if val!=''%}
+        <section id="prediction">
+          <div class="res">
+            THE DIGIT IS <span id="result">{{val}}</span>
+          </div>
+        </section>
+        {%endif%}
+      </center>
+    </section>
+  </body>
+  <script
+    type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"
+  ></script>
+  <script language="javascript" type="text/javascript">
+    $(function () {
+      $("#in_image").change(function () {
+        $("#preview").html("");
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+        if (regex.test($(this).val().toLowerCase())) {
+          if ($.browser.msie && parseFloat(jQuery.browser.version) <= 9.0) {
+            $("#preview").show();
+            $("#preview")[0].filters.item(
+              "DXImageTransform.Microsoft.AlphaImageLoader"
+            ).src = $(this).val();
+          } else {
+            if (typeof FileReader != "undefined") {
+              $("#preview").show();
+              $("#preview").append("<img />");
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                $("#preview img").attr("src", e.target.result);
+              };
+              reader.readAsDataURL($(this)[0].files[0]);
+            } else {
+              alert("This browser does not support FileReader.");
+            }
+          }
+        } else {
+          alert("Please upload a valid image file.");
+        }
+      });
+    });
+  </script>
+</html>
